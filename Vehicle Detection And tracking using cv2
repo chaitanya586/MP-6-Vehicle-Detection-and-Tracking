@@ -1,0 +1,43 @@
+import cv2
+
+# capture frames from a video
+cap = cv2.VideoCapture(r"C:\\Users\\rk001\\Downloads\\carv.mp4")
+
+# Check if the video capture is successful
+if not cap.isOpened():
+    print("Error: Could not open video.")
+    exit()
+
+# Trained XML classifiers describe some features of some object we want to detect
+car_cascade = cv2.CascadeClassifier(r"C:\\Users\\rk001\\Downloads\\carx.xml")
+
+# loop runs if capturing has been initialized.
+while True:
+    # Capture frame-by-frame
+    ret, frames = cap.read()
+
+    # Check if the frame is empty
+    if not ret:
+        print("Error: Unable to read frame.")
+        break
+
+    # Convert the frame to grayscale
+    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
+
+    # Detect cars in the grayscale frame
+    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+
+    # Draw rectangles around the detected cars
+    for (x, y, w, h) in cars:
+        cv2.rectangle(frames, (x, y), (x+w, y+h), (0, 0, 255), 2)
+
+    # Display the resulting frame
+    cv2.imshow('sKSama', frames)
+
+    # Check for the 'Esc' key to exit
+    if cv2.waitKey(33) == 27:
+        break
+
+# Release the video capture object and close all windows
+cap.release()
+cv2.destroyAllWindows()
